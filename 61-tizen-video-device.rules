@@ -1,0 +1,10 @@
+ACTION!="add", GOTO="tizen_video_device_end"
+
+# video
+KERNEL=="video[6-7]", GROUP="video", SECLABEL{smack}="device::hwcodec"
+KERNEL=="video1[3-4]", GROUP="video", SECLABEL{smack}="device::hwcodec"
+KERNEL=="video10[0-1]", GROUP="video", SECLABEL{smack}="device::camera"
+KERNEL=="video11[0-1]", GROUP="video", SECLABEL{smack}="device::camera"
+KERNEL=="video134", GROUP="video", SECLABEL{smack}="device::camera"
+
+LABEL="tizen_video_device_end"
