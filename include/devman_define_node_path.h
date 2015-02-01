@@ -37,6 +37,8 @@
 #define IMAGE_ENHANCE_PATH			"/sys/class/extension/mdnie/%s"
 #define IMAGE_ENHANCE_PATH_INFO			"/sys/class/extension/mdnie"
 
+#define DRM_PATH	"/sys/devices/platform/exynos-drm/drm/card0"
+
 #define DISPLAY_FRAME_RATE_PATH        "/sys/class/graphics/fb0/dynamic_fps"
 #define DISPLAY_MISC_LCD_FPS_PATH        "/sys/class/sec/sec_misc/lcd_fps"
 

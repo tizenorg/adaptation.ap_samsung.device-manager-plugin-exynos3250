@@ -799,36 +799,52 @@ int OEM_sys_set_backlight_elvss_control(int index, int value)
 
 int OEM_sys_get_lcd_power(int index, int *value)
 {
-	int ret = -1;
-	char path[MAX_NAME+1];
+	static const char *str_conn = "connected";
+	static const char *str_on = "On", *str_off = "Off";
+	DIR *dir;
+	struct dirent *dent;
+	char path[PATH_MAX], buf[BUFF_MAX] = {0,};
+	int ret, connected = 0;
 
-	if (index >= DISP_MAX) {
-		devmgr_log("supports %d display node", DISP_MAX);
-		return ret;
+	dir = opendir(DRM_PATH);
+	if (!dir)
+		return -errno;
+
+	while ((dent = readdir(dir))) {
+		if (!(dent->d_type == DT_DIR && strstr(dent->d_name, "card0")))
+			continue;
+
+		snprintf(path, sizeof(path), "%s/%s/status", DRM_PATH, dent->d_name);
+		ret = sys_get_str(path, buf);
+		if (!strncmp(buf, str_conn, strlen(str_conn))) {
+			connected = 1;
+			break;
+		}
 	}
 
-	snprintf(path, MAX_NAME, LCD_POWER_PATH, disp_info[index].lcd_name);
-	ret = sys_get_int(path, value);
-	/*devmgr_log("path[%s]value[%d]", path, *value);*/
+	closedir(dir);
 
-	return ret;
+	if (!connected)
+		return -ENOENT;
+
+	memset(buf, 0, sizeof(buf));
+	snprintf(path, sizeof(path), "%s/%s/dpms", DRM_PATH, dent->d_name);
+	ret = sys_get_str(path, buf);
+
+	if (!strncmp(buf, str_on, strlen(str_on)))
+		*value = 0;
+	else if (!strncmp(buf, str_off, strlen(str_off)))
+		*value = 4;
+	else
+		return -EPERM;
+
+	devmgr_log("%s - %d", path, *value);
+	return 0;
 }
 
 int OEM_sys_set_lcd_power(int index, int value)
 {
-	int ret = -1;
-	char path[MAX_NAME+1];
-
-	if (index >= DISP_MAX) {
-		devmgr_log("supports %d display node", DISP_MAX);
-		return ret;
-	}
-
-	snprintf(path, MAX_NAME, LCD_POWER_PATH, disp_info[index].lcd_name);
-	devmgr_log("path[%s]value[%d]", path, value);
-	ret = sys_set_int(path, value);
-
-	return ret;
+	return -EPERM;
 }
 
 /* image_enhance */
