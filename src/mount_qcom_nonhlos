@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "Mount modem amd apnhlos"
+#mount -t vfat -o ro,shortname=lower /dev/mmcblk0p1 /lib/firmware/apnhlos
+mount -t vfat -o ro,shortname=lower /dev/mmcblk0p2 /lib/firmware/modem
